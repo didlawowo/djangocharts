@@ -8,14 +8,14 @@ from .models import Question, Choice
 
 # Get questions and display them
 def index(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    context = {'latest_question_list': latest_question_list}
-    return render(request, 'polls/index.html', context)
+    if request.user.is_authenticated:
+        latest_question_list = Question.objects.order_by('-pub_date')[:5]
+        context = {'latest_question_list': latest_question_list}
+        return render(request, 'polls/indexadmin.html', context)
+    else:
+        return render(request, 'polls/index.html')
 
-def all_results(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    context = {'latest_question_list': latest_question_list}
-    return render(request, 'polls/index.html', context)
+
 
 
 # Show specific question and choices
@@ -50,7 +50,7 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         # return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
-        return render(request,'polls/vote_ok.html', { 'question': question })
+        return render(request,'polls/voteok.html', { 'question': question })
 
 def resultsData(request, obj):
     votedata = []

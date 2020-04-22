@@ -5,11 +5,75 @@
     {% for question in latest_question_list %}
       <div class="card mb-3">
         <div class="card-body">
-          <p class="lead">{{ question.question_text }}</p>
-           <a href="{% url 'polls:results' question.id %}" class="btn btn-secondary btn-sm">Resultats</a>
-        </div>
-      </div>
+            <ul class="list-group mb-5">
+                {% for choice in question.choice_set.all %}
+                <li class="list-group-item">
+                    {{ choice.choice_text }}  <span class="badge badge-success float-right">{{ choice.votes }} vote {{ choice.votes | pluralize }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div id="{{ question.id }}"></div>
+
+
+
+                    </div>
+                  </div>
     {% endfor %}
+
+
+  <script>
+
+                var state ={
+                    'items':[],
+                    'values':[],
+                }
+
+
+                var dataURL = `/polls/resultsdata/${objId}/`
+                $.ajax({
+                    method:'GET',
+                    url:dataURL,
+                    success:function(response){
+                        console.log('RESPONSE:', response)
+                        for (var i in response){
+
+                            var key = Object.keys(response[i])[0]
+                            var value = Object.values(response[i])[0]
+
+                            state.items.push(key)
+                            state.values.push(value)
+                        }
+
+                        console.log('STATE:', state)
+                        buildChart($objId)
+
+                    }
+                })
+
+                function buildChart($objId){
+                        var chartData = {
+                        "type":"bar",
+                        "scale-x":{
+                            "values":state.items
+                        },
+                        "series":[
+                            {
+                                "values":state.values
+                            }
+                        ]
+                    }
+
+
+                    zingchart.render({
+                      id: $objId,
+                      data: chartData,
+                    });
+                }
+
+
+            </script>
+
   {% else %}
     <p>pas de sondages</p>
   {% endif %}
