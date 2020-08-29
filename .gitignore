@@ -1,6 +1,6 @@
 
 *.iml
 *.xml
-.venv
+.venv2
 *.pyc
 *.pyc
